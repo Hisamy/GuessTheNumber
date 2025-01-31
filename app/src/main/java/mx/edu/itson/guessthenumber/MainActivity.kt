@@ -1,6 +1,7 @@
 package mx.edu.itson.guessthenumber
 
 import android.os.Bundle
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
@@ -15,11 +16,23 @@ class MainActivity : AppCompatActivity() {
     var num:Int=0
     var won=false
 
+    fun checkingLimits():Boolean{
+        return minValue != maxValue
+    }
+
+    fun resetValues(){
+        minValue=0
+        maxValue=100
+        num=0
+        won=false
+
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val guesssings: TextView = findViewById(R.id.guessings)
+        val guessings: TextView = findViewById(R.id.guessings)
         val down: Button = findViewById(R.id.down)
         val up:Button = findViewById(R.id.up)
         val generate:Button = findViewById(R.id.generate)
@@ -27,6 +40,32 @@ class MainActivity : AppCompatActivity() {
 
         generate.setOnClickListener{
             num= Random.nextInt(minValue,maxValue)
+            guessings.setText(num.toString())
+            generate.visibility = View.INVISIBLE
+            guessed.visibility = View.VISIBLE
+        }
+        up.setOnClickListener{
+            minValue = num
+            if(checkingLimits()){
+                num=Random.nextInt(minValue,maxValue)
+                guessings.setText(num.toString())
+            }else{
+                guessings.setText("No puede ser, me ganaste")
+            }
+        }
+        down.setOnClickListener{
+            minValue = num
+            if(!won){
+                guessings.setText("Adiviné, tu número es el  "+num)
+                guessed.setText("Volver a ")
+                won = true
+            }else{
+                generate.visibility = View.VISIBLE
+                generate.setText("Tap on generate to start")
+                guessed.visibility = View.GONE
+                resetValues()
+            }
+
         }
     }
 }
